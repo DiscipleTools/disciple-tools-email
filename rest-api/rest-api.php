@@ -43,8 +43,6 @@ class Disciple_Tools_Email_Endpoints
 
         $message = wp_kses_post( $params['message'] );
 
-        dt_send_email( $args['email'], $args['subject'], $message );
-
         $options = get_option( 'dt_email_settings' );
         $api_key = $options['key'] ?? '';
         if ( empty( $api_key ) || empty( $options['domain'] ) || empty( $options['email'] ) ){
