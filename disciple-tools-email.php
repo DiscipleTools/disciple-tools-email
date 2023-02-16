@@ -2,10 +2,10 @@
 /**
  * Plugin Name: Disciple.Tools - D.T Email
  * Plugin URI: https://github.com/DiscipleTools/disciple-tools-email
- * Description: Disciple.Tools - D.T Email is intended to help developers and integrator jumpstart their extension of the Disciple.Tools system.
+ * Description: Sent and receive emails via mailgun
  * Text Domain: disciple-tools-email
  * Domain Path: /languages
- * Version:  0.1
+ * Version:  0.2
  * Author URI: https://github.com/DiscipleTools
  * GitHub Plugin URI: https://github.com/DiscipleTools/disciple-tools-email
  * Requires at least: 4.7.0
@@ -16,14 +16,6 @@
  * @link    https://github.com/DiscipleTools
  * @license GPL-2.0 or later
  *          https://www.gnu.org/licenses/gpl-2.0.html
- */
-
-/**
- * Refactoring (renaming) this plugin as your own:
- * 1. @todo Rename the `disciple-tools-email.php file.
- * 2. @todo Refactor all occurrences of the name Disciple_Tools_Email, disciple_tools_email, disciple-tools-email, dt_email, and "D.T Email"
- * 3. @todo Update the README.md and LICENSE
- * 4. @todo Update the default.pot file if you intend to make your plugin multilingual. Use a tool like POEdit
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -95,79 +87,22 @@ class Disciple_Tools_Email {
 
     private function __construct() {
         $is_rest = dt_is_rest();
-        /**
-         * @todo Decide if you want to use the REST API example
-         * To remove: delete this following line and remove the folder named /rest-api
-         */
+
         if ( $is_rest && strpos( dt_get_url_path(), 'dt-email' ) !== false ) {
             require_once( 'rest-api/rest-api.php' ); // adds starter rest api class
         }
 
-        /**
-         * @todo Decide if you want to create a new post type
-         * To remove: delete the line below and remove the folder named /post-type
-         */
-        require_once( 'post-type/loader.php' ); // add starter post type extension to Disciple.Tools system
-
-        /**
-         * @todo Decide if you want to create a custom site-to-site link
-         * To remove: delete the line below and remove the folder named /site-link
-         */
-        require_once( 'site-link/custom-site-to-site-links.php' ); // add site to site link class and capabilities
-
-        /**
-         * @todo Decide if you want to add new charts to the metrics section
-         * To remove: delete the line below and remove the folder named /charts
-         */
-        if ( strpos( dt_get_url_path(), 'metrics' ) !== false || ( $is_rest && strpos( dt_get_url_path(), 'disciple-tools-email-metrics' ) !== false ) ){
-            require_once( 'charts/charts-loader.php' );  // add custom charts to the metrics area
-        }
-
-        /**
-         * @todo Decide if you want to add a custom tile or settings page tile
-         * To remove: delete the lines below and remove the folder named /tile
-         */
         require_once( 'tile/custom-tile.php' ); // add custom tile
-        if ( 'settings' === dt_get_url_path() && ! $is_rest ) {
-            require_once( 'tile/settings-tile.php' ); // add custom settings page tile
-        }
 
-        /**
-         * @todo Decide if you want to create a magic link
-         * To remove: delete the line below and remove the folder named /magic-link
-         */
-        require_once( 'magic-link/post-type-magic-link/magic-link-post-type.php' );
-        require_once( 'magic-link/magic-link-user-app.php' );
-        require_once( 'magic-link/magic-link-non-object.php' );
-        require_once( 'magic-link/magic-link-map.php' );
-//        require_once( 'magic-link/magic-link-home.php' );
-
-        /**
-         * @todo Decide if you want to add a custom admin page in the admin area
-         * To remove: delete the 3 lines below and remove the folder named /admin
-         */
         if ( is_admin() ) {
             require_once( 'admin/admin-menu-and-tabs.php' ); // adds starter admin page and section for plugin
         }
 
-        /**
-         * @todo Decide if you want to support localization of your plugin
-         * To remove: delete the line below and remove the folder named /languages
-         */
         $this->i18n();
 
-        /**
-         * @todo Decide if you want to customize links for your plugin in the plugin admin area
-         * To remove: delete the lines below and remove the function named "plugin_description_links"
-         */
         if ( is_admin() ) { // adds links to the plugin description area in the plugin admin list.
             add_filter( 'plugin_row_meta', [ $this, 'plugin_description_links' ], 10, 4 );
         }
-
-        /**
-         * @todo Decide if you want to create default workflows
-         * To remove: delete the line below and remove the folder named /workflows
-         */
         require_once( 'workflows/workflows.php' );
 
     }
