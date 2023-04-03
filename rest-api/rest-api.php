@@ -131,7 +131,7 @@ class Disciple_Tools_Email_Endpoints
 
             DT_Posts::add_post_comment(
                 'contacts',
-                $contact->ID,
+                $contact['ID'],
                 'Email sent from: ' . $sender . "\n" . wp_kses_post( $email_params['stripped-text'] ),
                 'email',
                 [],
