@@ -107,8 +107,8 @@ class Disciple_Tools_Email_Endpoints
         $contacts = DT_Posts::search_viewable_post( 'contacts', $query );
         foreach ( $contacts['posts'] as $contact ){
 //            @todo get correct email
-            if ( isset( $contact['contact_email'][0]['value'] ) ){
-                $email = $contact['contact_email'][0]['value'];
+            if ( isset( $contact->contact_email[0]['value'] ) ){
+                $email = $contact->contact_email[0]['value'];
                 wp_mail( $email, $email_params['subject'], $email_params['body-html'] );
 
             }
