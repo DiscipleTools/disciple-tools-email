@@ -140,7 +140,7 @@ class Disciple_Tools_Email_Endpoints
                 }
             }
             if ( !$is_inline ){
-                $attachments[] = [ $attachment['tmp_name'], $attachment['name'] ];
+                $attachments[] = [ 'file' => $attachment['tmp_name'], 'name' => $attachment['name'] ];
             }
         }
 
