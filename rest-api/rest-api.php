@@ -136,18 +136,21 @@ class Disciple_Tools_Email_Endpoints
                         'uid' => trim( $contend_id_key, '><' ),
                         'name' => $attachment['name'],
                     ];
+                    $is_inline = true;
                 }
-                $is_inline = true;
             }
             if ( !$is_inline ){
-                $attachments[] = $attachment['tmp_name'];
+                $attachments[] = [ $attachment['tmp_name'], $attachment['name'] ];
             }
         }
 
-        add_action( 'phpmailer_init', function ( &$phpmailer ) use ( $inline_attachments ){
+        add_action( 'phpmailer_init', function ( &$phpmailer ) use ( $inline_attachments, $attachments ) {
             $phpmailer->SMTPKeepAlive = true; //phpcs:ignore
             foreach ( $inline_attachments as $a ) {
                 $phpmailer->AddEmbeddedImage( $a['file'], $a['uid'], $a['name'] );
+            }
+            foreach ( $attachments as $a ) {
+                $phpmailer->addAttachment( $a['file'], $a['name'] );
             }
         });
 
@@ -157,7 +160,7 @@ class Disciple_Tools_Email_Endpoints
 //            @todo get correct email
             if ( isset( $contact['contact_email'][0]['value'] ) ){
                 $email = $contact['contact_email'][0]['value'];
-                wp_mail( $email, $email_params['subject'], $email_params['body-html'], $headers, $attachments );
+                wp_mail( $email, $email_params['subject'], $email_params['body-html'], $headers );
             }
 
             DT_Posts::add_post_comment(
