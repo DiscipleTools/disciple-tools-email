@@ -95,7 +95,7 @@ class Disciple_Tools_Email_Endpoints
         if ( isset( explode( '@', $parts[1] )[1] ) ){
             $query_hash = explode( '@', $parts[1] )[0];
         }
-        if ( empty( $user_id ) || empty( $query_hash ) ){
+        if ( empty( $user_id ) || empty( $query_hash ) || empty( $email_params['body-html'] ) ){
             return new WP_Error( __METHOD__, 'Missing required fields', [ 'status' => 400 ] );
         }
         $query = get_user_meta( $user_id, 'email_query_' . $query_hash, true );
@@ -104,12 +104,28 @@ class Disciple_Tools_Email_Endpoints
         }
 
         wp_set_current_user( $user_id );
-        $contacts = DT_Posts::search_viewable_post( 'contacts', $query );
+        $query['fields_to_return'] = [ 'contact_email', 'emails' ];
+        $contacts = DT_Posts::list_posts( 'contacts', $query );
+        $headers = [];
+        if ( isset( $email_params['headers'] ) ){
+            foreach ( $email_params['headers'] as $header ){
+                if ( strpos( $header, 'Content-Type' ) !== false ){
+                    $headers[] = $header;
+                }
+            }
+        }
+        if ( empty( $headers ) ){
+            $headers[] = 'Content-Type: text/html';
+            $headers[] = 'charset=UTF-8';
+        }
+
+
+
         foreach ( $contacts['posts'] as $contact ){
 //            @todo get correct email
-            if ( isset( $contact->contact_email[0]['value'] ) ){
-                $email = $contact->contact_email[0]['value'];
-                wp_mail( $email, $email_params['subject'], $email_params['body-html'] );
+            if ( isset( $contact['contact_email'][0]['value'] ) ){
+                $email = $contact['contact_email'][0]['value'];
+                wp_mail( $email, $email_params['subject'], $email_params['body-html'], $headers );
 
             }
 
