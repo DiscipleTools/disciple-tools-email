@@ -84,7 +84,7 @@ class Disciple_Tools_Email_Endpoints
     }
 
 
-    public function forward_to_list( $sender, $recipient, $email_params ){
+    public function forward_to_list( $sender, $recipient, $email_params, $files ){
         $parts = explode( '_', $recipient );
         $user_id = null;
         $query_hash = null;
@@ -107,17 +107,46 @@ class Disciple_Tools_Email_Endpoints
         $query['fields_to_return'] = [ 'contact_email', 'emails' ];
         $contacts = DT_Posts::list_posts( 'contacts', $query );
         $headers = [];
-        if ( isset( $email_params['headers'] ) ){
-            foreach ( $email_params['headers'] as $header ){
-                if ( strpos( $header, 'Content-Type' ) !== false ){
-                    $headers[] = $header;
-                }
-            }
-        }
+//        if ( isset( $email_params['headers'] ) ){
+//            foreach ( $email_params['headers'] as $header ){
+//                if ( isset( $header[0] ) && strpos( $header, 'Content-Type' ) !== false ){
+//                    $headers[] = $header;
+//                }
+//            }
+//        }
         if ( empty( $headers ) ){
             $headers[] = 'Content-Type: text/html';
             $headers[] = 'charset=UTF-8';
         }
+
+        $attachments = [];
+        $inline_attachments = [];
+
+        $content_id_map = [];
+        if ( !empty( $params['content-id-map'] ) ){
+            $content_id_map = json_decode( $params['content-id-map'], true );
+        }
+
+        foreach ( $files as $attachment_key => $attachment ){
+            foreach ( $content_id_map ?? [] as $contend_id_key => $content_attachment_key ){
+                if ( $attachment_key === $content_attachment_key ){
+                    $inline_attachments[] = [
+                        'file' => $attachment['tmp_name'],
+                        'uid' => trim( $contend_id_key, '><' ),
+                        'name' => $attachment['name'],
+                    ];
+                } else {
+                    $attachments[] = $attachment['tmp_name'];
+                }
+            }
+        }
+
+        add_action( 'phpmailer_init', function ( &$phpmailer ) use ( $inline_attachments ){
+            $phpmailer->SMTPKeepAlive = true; //phpcs:ignore
+            foreach ( $inline_attachments as $a ) {
+                $phpmailer->AddEmbeddedImage( $a['file'], $a['uid'], $a['name'] );
+            }
+        });
 
 
 
@@ -125,8 +154,7 @@ class Disciple_Tools_Email_Endpoints
 //            @todo get correct email
             if ( isset( $contact['contact_email'][0]['value'] ) ){
                 $email = $contact['contact_email'][0]['value'];
-                wp_mail( $email, $email_params['subject'], $email_params['body-html'], $headers );
-
+                wp_mail( $email, $email_params['subject'], $email_params['body-html'], $headers, $attachments );
             }
 
             DT_Posts::add_post_comment(
@@ -148,6 +176,10 @@ class Disciple_Tools_Email_Endpoints
         $params = $request->get_params();
         dt_write_log( $params );
 
+        dt_write_log( $request->get_file_params() );
+
+        $files = $request->get_file_params();
+
         if ( !isset( $params['sender'] ) || !isset( $params['recipient'] ) || !isset( $params['subject'] ) || !isset( $params['body-plain'] ) ){
             return new WP_Error( __METHOD__, 'Missing required fields', [ 'status' => 400 ] );
         }
@@ -160,7 +192,7 @@ class Disciple_Tools_Email_Endpoints
         $body_plain_without_quotes = wp_kses_post( $params['stripped-text'] ?? '' );
 
         if ( strpos( $recipient, 'fw-user' ) !== false ){
-            return $this->forward_to_list( $sender, $recipient, $params );
+            return $this->forward_to_list( $sender, $recipient, $params, $files  );
         }
 
         $contact_id = self::find_contact_by_email_address( $sender, false );
