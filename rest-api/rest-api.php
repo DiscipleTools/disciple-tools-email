@@ -123,11 +123,12 @@ class Disciple_Tools_Email_Endpoints
         $inline_attachments = [];
 
         $content_id_map = [];
-        if ( !empty( $params['content-id-map'] ) ){
-            $content_id_map = json_decode( $params['content-id-map'], true );
+        if ( !empty( $email_params['content-id-map'] ) ){
+            $content_id_map = json_decode( $email_params['content-id-map'], true );
         }
 
         foreach ( $files as $attachment_key => $attachment ){
+            $is_inline = false;
             foreach ( $content_id_map ?? [] as $contend_id_key => $content_attachment_key ){
                 if ( $attachment_key === $content_attachment_key ){
                     $inline_attachments[] = [
@@ -135,9 +136,11 @@ class Disciple_Tools_Email_Endpoints
                         'uid' => trim( $contend_id_key, '><' ),
                         'name' => $attachment['name'],
                     ];
-                } else {
-                    $attachments[] = $attachment['tmp_name'];
                 }
+                $is_inline = true;
+            }
+            if ( !$is_inline ){
+                $attachments[] = $attachment['tmp_name'];
             }
         }
 
