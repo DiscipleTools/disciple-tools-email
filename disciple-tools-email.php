@@ -105,6 +105,8 @@ class Disciple_Tools_Email {
         }
         require_once( 'workflows/workflows.php' );
 
+        require_once( 'tile/functions.php' );
+
     }
 
     /**
