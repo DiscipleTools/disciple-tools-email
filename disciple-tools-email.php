@@ -103,10 +103,6 @@ class Disciple_Tools_Email {
         if ( is_admin() ) { // adds links to the plugin description area in the plugin admin list.
             add_filter( 'plugin_row_meta', [ $this, 'plugin_description_links' ], 10, 4 );
         }
-        require_once( 'workflows/workflows.php' );
-
-        require_once( 'tile/functions.php' );
-
     }
 
     /**

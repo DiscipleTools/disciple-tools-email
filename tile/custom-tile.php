@@ -84,6 +84,16 @@ class Disciple_Tools_Email_Tile
                             <label>Subject
                                 <input type="text" id="dt-send-email-subject" value="">
                             </label>
+                            <p>
+                                <span><?php echo sprintf( esc_html__( 'Emails will be sent from: %s', 'disciple_tools' ), esc_html( dt_default_email_address() ) ); ?></span><br>
+                            </p>
+                            <label>From Name
+                                <input type="text" id="dt-send-email-from-name" value="Gospel Ambition">
+                            </label>
+                            <label>Reply To
+                                <input type="text" id="dt-send-email-reply-to" value="">
+                            </label>
+
                             <label>Message
                                 <textarea id="dt-send-email-message" rows="4"></textarea>
                             </label>
@@ -100,14 +110,17 @@ class Disciple_Tools_Email_Tile
                             alert('Please fill out all fields');
                             return;
                         }
+
                         $.ajax({
                             type: "POST",
-                            url: '<?php echo esc_url( site_url( '/wp-json/dt-email/v1/send' ) ) ?>',
+                            url: `${window.wpApiShare.root}dt-posts/v2/${window.detailsSettings.post_type}/${window.detailsSettings.post_id}/post_messaging`,
                             data: {
                                 email: email,
                                 subject: subject,
                                 message: message,
-                                contact_id: <?php echo esc_html( get_the_ID() ) ?>
+                                from_name: $('#dt-send-email-from-name').val() || '',
+                                reply_to: $('#dt-send-email-reply-to').val() || '',
+                                send_method: 'email'
                             },
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_html( wp_create_nonce( 'wp_rest' ) ) ?>');
@@ -121,6 +134,27 @@ class Disciple_Tools_Email_Tile
                                 console.log(err);
                             }
                         });
+                        //$.ajax({
+                        //    type: "POST",
+                        //    url: '<?php //echo esc_url( site_url( '/wp-json/dt-email/v1/send' ) ) ?>//',
+                        //    data: {
+                        //        email: email,
+                        //        subject: subject,
+                        //        message: message,
+                        //        contact_id: <?php //echo esc_html( get_the_ID() ) ?>
+                        //    },
+                        //    beforeSend: function (xhr) {
+                        //        xhr.setRequestHeader('X-WP-Nonce', '<?php //echo esc_html( wp_create_nonce( 'wp_rest' ) ) ?>//');
+                        //    },
+                        //    success: function (response) {
+                        //        console.log(response);
+                        //        $('#modal-large').foundation('close');
+                        //        $(this).removeClass('loading');
+                        //    },
+                        //    error: function (err) {
+                        //        console.log(err);
+                        //    }
+                        //});
                     })
                 })
             </script>
