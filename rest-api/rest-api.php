@@ -198,7 +198,7 @@ class Disciple_Tools_Email_Endpoints
         $body_plain_without_quotes = wp_kses_post( $params['stripped-text'] ?? '' );
 
         if ( strpos( $recipient, 'fw-user' ) !== false ){
-            return $this->forward_to_list( $sender, $recipient, $params, $files  );
+            return $this->forward_to_list( $sender, $recipient, $params, $files );
         }
 
         $contact_id = self::find_contact_by_email_address( $sender, false );

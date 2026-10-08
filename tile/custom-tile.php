@@ -16,8 +16,7 @@ class Disciple_Tools_Email_Tile
         add_filter( 'dt_custom_fields_settings', [ $this, 'dt_custom_fields' ], 1, 2 );
         add_action( 'dt_details_additional_section', [ $this, 'dt_add_section' ], 30, 2 );
         add_filter( 'dt_comments_additional_sections', [ $this, 'dt_comments_additional_sections' ], 10, 2 );
-
-   }
+    }
 
     public function dt_comments_additional_sections( $sections, $post_type ){
         if ( $post_type === 'contacts' ){

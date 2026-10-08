@@ -50,7 +50,6 @@ class Disciple_Tools_Email_Menu {
 
         add_submenu_page( 'dt_extensions', $this->page_title, $this->page_title, 'manage_dt', $this->token, [ $this, 'content' ] );
         add_action( 'admin_init', array( $this, 'page_init' ) );
-
     }
     /**
      * Register and add settings
@@ -117,21 +116,21 @@ class Disciple_Tools_Email_Menu {
     {
         printf(
             '<input type="text" id="email" name="dt_email_settings[email]" value="%s" />',
-            isset( $this->options['email'] ) ? esc_attr( $this->options['email']) : ''
+            isset( $this->options['email'] ) ? esc_attr( $this->options['email'] ) : ''
         );
     }
     public function domain_callback()
     {
         printf(
             '<input type="text" id="domain" name="dt_email_settings[domain]" value="%s" />',
-            isset( $this->options['email'] ) ? esc_attr( $this->options['domain']) : ''
+            isset( $this->options['email'] ) ? esc_attr( $this->options['domain'] ) : ''
         );
     }
     public function key_callback()
     {
         printf(
             '<input type="text" id="key" name="dt_email_settings[key]" value="%s" />',
-            isset( $this->options['key'] ) ? esc_attr( $this->options['key']) : ''
+            isset( $this->options['key'] ) ? esc_attr( $this->options['key'] ) : ''
         );
     }
 
