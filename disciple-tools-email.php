@@ -54,7 +54,6 @@ function disciple_tools_email() {
     }
 
     return Disciple_Tools_Email::instance();
-
 }
 add_action( 'after_setup_theme', 'disciple_tools_email', 20 );
 
